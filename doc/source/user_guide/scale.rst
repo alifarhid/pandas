@@ -254,8 +254,7 @@ Let's write a function that uses pandas ``concat`` and ``groupby``, two of the m
 As you see in the code below, the API functions are exactly as pandas, you just ``import bodo`` and put a
 ``bodo.jit()`` decorator on top of your function.
 
-.. code-block:: python
-    :okwarning:
+.. ipython:: python
 
     import time
     import bodo
