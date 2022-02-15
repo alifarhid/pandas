@@ -239,9 +239,9 @@ There are a number of libraries that can scale your python code through parallel
 ray, numba, to name a few.
 
 `Bodo`_ is a JIT (just-in-time) compiler engine that takes the python code almost as is and run it on multiple cores
-in parallel, on a machine or a cluster of machines. With bodo you can use the same pandas APIs.
+in parallel, on a machine or a cluster of machines. With `Bodo`_ you can use the same pandas APIs.
 
-Bodo can be installed through pip or conda. To see more detail please refer to
+`Bodo`_ can be installed through pip or conda. To see more detail please refer to
 documentation in `bodo.ai`_ . Here is a summary of installation in a conda environment:
 
 .. code-block:: bash
@@ -250,9 +250,9 @@ documentation in `bodo.ai`_ . Here is a summary of installation in a conda envir
     conda install bodo -c bodo.ai -c conda-forge
 
 
-Let's write a function that uses pandas concat and groupby, two of the most popular pandas functions.
-As you see in the code below, the API functions are exactly as pandas, you just import bodo and put a decorator
-on top of your function.
+Let's write a function that uses pandas ``concat`` and ``groupby``, two of the most popular pandas functions.
+As you see in the code below, the API functions are exactly as pandas, you just ``import bodo`` and put a
+``bodo.jit()`` decorator on top of your function.
 
 .. code-block:: python
     import time
@@ -287,7 +287,7 @@ on top of your function.
             print("Total time: {:.2}".format(total_time))
 
 
-Run the code using mpiexec with 4 cores:
+Run the code using ``mpiexec`` with 4 cores. The first time you run it, you may get a warning, ignore it.
 
 .. code-block:: bash
     mpiexec -n 4 python mycode.py
@@ -305,8 +305,8 @@ Output:
     Compilation time: 5.52
     Total time: 9.1
 
-Having the cache=True in the bodo jit decorator allows you to cache the compiled code to save on
-compilation time the next time you run your code. Run it again and see your total time turns less than 5 seconds.
+Having the ``cache=True`` in the bodo jit decorator allows you to cache the compiled code to save on
+compilation time the next time you run your code. Run it again and see your total time becomes less than 5 seconds.
 
 Output after running the code one more time:
 
@@ -321,7 +321,7 @@ Output after running the code one more time:
     Compilation time: 0.44
     Total time: 4.1
 
-Now comment out the `@bodo.jit()` decorator and run the code using python:
+Now comment out the ``@bodo.jit()`` decorator and run the code using python:
 
 .. code-block:: bash
     python mycode.py
@@ -341,7 +341,7 @@ Output:
     Total Time: 542.11
 
 Running this code with python takes more than 500 seconds, while bodo reduced the run time to less than 5 seconds.
-This means 100x performance improvement using bodo.
+This means 100x performance improvement using `Bodo`_.
 
 .. _Bodo: https://bodo.ai
 .. _bodo.ai: https://bodo.ai
