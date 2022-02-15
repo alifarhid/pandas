@@ -255,6 +255,7 @@ As you see in the code below, the API functions are exactly as pandas, you just 
 ``bodo.jit()`` decorator on top of your function.
 
 .. code-block:: python
+    :okwarning:
     import time
     import bodo
     import pandas as pd
@@ -290,11 +291,13 @@ As you see in the code below, the API functions are exactly as pandas, you just 
 Run the code using ``mpiexec`` with 4 cores. The first time you run it, you may get a warning, ignore it.
 
 .. code-block:: bash
+
     mpiexec -n 4 python mycode.py
 
 Output:
 
 .. code-block:: bash
+
     100000000
        A         B
     0  a  10000000
@@ -311,6 +314,7 @@ compilation time the next time you run your code. Run it again and see your tota
 Output after running the code one more time:
 
 .. code-block:: bash
+
     100000000
        A         B
     0  a  10000000
@@ -324,12 +328,14 @@ Output after running the code one more time:
 Now comment out the ``@bodo.jit()`` decorator and run the code using python:
 
 .. code-block:: bash
+
     python mycode.py
 
 
 Output:
 
 .. code-block:: bash
+
     100000000
        A         B
     0  a  10000000
