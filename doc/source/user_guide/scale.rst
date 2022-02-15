@@ -288,7 +288,7 @@ As you see in the code below, the API functions are exactly as pandas, you just 
             print("Total time: {:.2}".format(total_time))
 
 
-Run the code using ``mpiexec`` with 4 cores. The first time you run it, you may get a warning, ignore it.
+Run the code in your terminal using ``mpiexec`` with 4 cores. The first time you run it, you may get a warning, ignore it.
 
 .. code-block:: bash
 
@@ -296,7 +296,7 @@ Run the code using ``mpiexec`` with 4 cores. The first time you run it, you may 
 
 Output:
 
-.. code-block:: bash
+::
 
     100000000
        A         B
@@ -313,7 +313,7 @@ compilation time the next time you run your code. Run it again and see your tota
 
 Output after running the code one more time:
 
-.. code-block:: bash
+::
 
     100000000
        A         B
@@ -334,7 +334,7 @@ Now comment out the ``@bodo.jit()`` decorator and run the code using python:
 
 Output:
 
-.. code-block:: bash
+::
 
     100000000
        A         B
