@@ -235,7 +235,124 @@ pandas' API has become something of a standard that other libraries implement.
 The pandas documentation maintains a list of libraries implementing a DataFrame API
 in :ref:`our ecosystem page <ecosystem.out-of-core>`.
 
-For example, `Dask`_, a parallel computing library, has `dask.dataframe`_, a
+There are a number of libraries that can scale your python code through parallel computing, e.g., bodo, dask,
+ray, numba, to name a few.
+
+`Bodo`_ is a JIT (just-in-time) compiler engine that takes the python code almost as is and run it on multiple cores
+in parallel, on a machine or a cluster of machines. With `Bodo`_ you can use the same pandas APIs.
+
+`Bodo`_ can be installed through pip or conda. To see more detail please refer to
+documentation in `bodo.ai`_ . Here is a summary of installation in a conda environment:
+
+.. code-block:: bash
+    conda create -n Bodo python=3.9 -c conda-forge
+    conda activate Bodo
+    conda install bodo -c bodo.ai -c conda-forge
+
+
+Let's write a function that uses pandas ``concat`` and ``groupby``, two of the most popular pandas functions.
+As you see in the code below, the API functions are exactly as pandas, you just ``import bodo`` and put a
+``bodo.jit()`` decorator on top of your function.
+
+.. ipython:: python
+
+    import time
+    import bodo
+    import pandas as pd
+
+
+    @bodo.jit(cache=True)
+    def create_df():
+        _t0 = time.time()
+        n = 10_000_000
+        df = pd.DataFrame({"A": ["a", "b", "c", "d"], "B": [1, 2, 3, 4]})
+
+        df_enlarged = pd.concat([df] * n, axis=0, ignore_index=True)
+        df2 = df_enlarged.groupby("A", as_index=False).sum()
+
+        print(df2["B"].sum())
+        print(df2.head())
+        _t1 = time.time()
+        compute_time = _t1 - _t0
+        print("Compute time: {:.2f}".format(compute_time))
+        return df, compute_time
+
+
+    if __name__ == "__main__":
+        t0 = time.time()
+        data, tc = create_df()
+        t1 = time.time()
+        total_time = t1 - t0
+        if bodo.get_rank() == 0:
+            print("Compilation time: {:.2f}".format(total_time - tc))
+            print("Total time: {:.2}".format(total_time))
+
+
+Run the code in your terminal using ``mpiexec`` with 4 cores. The first time you run it, you may get a warning, ignore it.
+
+.. code-block:: bash
+
+    mpiexec -n 4 python mycode.py
+
+Output:
+
+::
+
+    100000000
+       A         B
+    0  a  10000000
+    1  b  20000000
+    2  c  30000000
+    3  d  40000000
+    Compute time: 3.62
+    Compilation time: 5.52
+    Total time: 9.1
+
+Having the ``cache=True`` in the bodo jit decorator allows you to cache the compiled code to save on
+compilation time the next time you run your code. Run it again and see your total time becomes less than 5 seconds.
+
+Output after running the code one more time:
+
+::
+
+    100000000
+       A         B
+    0  a  10000000
+    1  b  20000000
+    2  c  30000000
+    3  d  40000000
+    Compute time: 3.70
+    Compilation time: 0.44
+    Total time: 4.1
+
+Now comment out the ``@bodo.jit()`` decorator and run the code using python:
+
+.. code-block:: bash
+
+    python mycode.py
+
+
+Output:
+
+::
+
+    100000000
+       A         B
+    0  a  10000000
+    1  b  20000000
+    2  c  30000000
+    3  d  40000000
+    Compute time: 542.11
+    Compilation time: 0.00
+    Total Time: 542.11
+
+Running this code with python takes more than 500 seconds, while bodo reduced the run time to less than 5 seconds.
+This means 100x performance improvement using `Bodo`_.
+
+.. _Bodo: https://bodo.ai
+.. _bodo.ai: https://bodo.ai
+
+As another example, `Dask`_, a parallel computing library, has `dask.dataframe`_, a
 pandas-like API for working with larger than memory datasets in parallel. Dask
 can use multiple threads or processes on a single machine, or a cluster of
 machines to process data in parallel.
